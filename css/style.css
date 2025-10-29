@@ -174,3 +174,21 @@ nav a.active {
         max-width: 1140px;
     }
 }
+
+/* Footer Styles */
+.site-footer {
+    background-color: #16a34a; /* green */
+    color: #ffffff;
+    padding: var(--spacing-md) 0;
+}
+
+.site-footer .container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.site-footer p {
+    margin: 0;
+    font-size: 14px;
+}
