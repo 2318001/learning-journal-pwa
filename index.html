@@ -4,195 +4,14 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>James Kamerun - Personal Journal</title>
-    <style>
-        /* Reset and base styles */
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        }
-
-        body {
-            background-color: #f8f9fa;
-            color: #333;
-            line-height: 1.6;
-        }
-
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 0 20px;
-        }
-
-        /* Header styles */
-        header {
-            background-color: #2c3e50;
-            color: white;
-            padding: 1rem 0;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-        }
-
-        .navbar {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .logo {
-            font-size: 1.8rem;
-            font-weight: bold;
-        }
-
-        /* Navigation */
-        .nav-links {
-            display: flex;
-            list-style: none;
-        }
-
-        .nav-links li {
-            margin-left: 25px;
-        }
-
-        .nav-links a {
-            color: white;
-            text-decoration: none;
-            font-weight: 500;
-            transition: color 0.3s;
-            padding: 5px 10px;
-            border-radius: 4px;
-        }
-
-        .nav-links a:hover {
-            color: #3498db;
-            background-color: rgba(255, 255, 255, 0.1);
-        }
-
-        /* Hero Section */
-        .hero-section {
-            display: flex;
-            align-items: center;
-            padding: 4rem 0;
-            min-height: 80vh;
-        }
-
-        .hero-text {
-            flex: 1;
-            padding-right: 2rem;
-        }
-
-        .hello {
-            font-size: 1.2rem;
-            color: #3498db;
-            margin-bottom: 0.5rem;
-        }
-
-        .hero-text h1 {
-            font-size: 3rem;
-            margin-bottom: 1.5rem;
-            color: #2c3e50;
-        }
-
-        .hero-text h1 span {
-            color: #3498db;
-        }
-
-        .description {
-            font-size: 1.2rem;
-            margin-bottom: 2rem;
-            color: #555;
-            max-width: 500px;
-        }
-
-        .btn {
-            display: inline-block;
-            background-color: #3498db;
-            color: white;
-            padding: 12px 30px;
-            border-radius: 30px;
-            text-decoration: none;
-            font-weight: 600;
-            transition: background-color 0.3s, transform 0.3s;
-        }
-
-        .btn:hover {
-            background-color: #2980b9;
-            transform: translateY(-3px);
-        }
-
-        .hero-image {
-            flex: 1;
-            text-align: center;
-        }
-
-        .hero-image img {
-            max-width: 100%;
-            border-radius: 50%;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-            max-height: 400px;
-        }
-
-        /* Mobile responsiveness */
-        @media (max-width: 768px) {
-            .navbar {
-                flex-direction: column;
-                text-align: center;
-            }
-            
-            .logo {
-                margin-bottom: 1rem;
-            }
-            
-            .nav-links {
-                justify-content: center;
-                flex-wrap: wrap;
-            }
-            
-            .nav-links li {
-                margin: 5px 10px;
-            }
-            
-            .hero-section {
-                flex-direction: column;
-                text-align: center;
-                padding: 2rem 0;
-            }
-            
-            .hero-text {
-                padding-right: 0;
-                margin-bottom: 2rem;
-            }
-            
-            .hero-text h1 {
-                font-size: 2.5rem;
-            }
-            
-            .description {
-                margin: 0 auto 2rem;
-            }
-        }
-
-        @media (max-width: 480px) {
-            .container {
-                padding: 0 15px;
-            }
-            
-            .hero-text h1 {
-                font-size: 2rem;
-            }
-            
-            .description {
-                font-size: 1rem;
-            }
-        }
-    </style>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
     <header>
-        <div class="container navbar">
+        <div class="container">
             <div class="logo">MY JOURNAL</div>
             <nav>
-                <ul class="nav-links">
+                <ul>
                     <li><a href="#" class="active">Home</a></li>
                     <li><a href="#">My Journal</a></li>
                     <li><a href="#">CV</a></li>
@@ -204,18 +23,19 @@
     
     <main>
         <div class="container">
-            <section class="hero-section">
-                <div class="hero-text">
-                    <p class="hello">Hello</p>
-                    <h1>I'm <span>James</span> Kamerun</h1>
-                    <p class="description">
-                        This is my Learning Journal website — a space where I document my weekly progress and share creative projects from my Mobile App Development course.
-                    </p>
-                    <a href="#" class="btn">Download CV</a>
-                </div>
-                <div class="hero-image">
-                    <!-- Placeholder for profile image -->
-                    <img src="https://via.placeholder.com/400x400/3498db/ffffff?text=Profile+Image" alt="Profile Image" />
+            <section class="hero">
+                <div class="hero-content">
+                    <div class="hero-text">
+                        <p class="hello">Hello</p>
+                        <h1>I'm <span>James</span> Kamerun</h1>
+                        <p class="description">
+                            Welcome to my personal journal! Here I document my thoughts, experiences, and creative projects.
+                        </p>
+                        <a href="#" class="btn">Download CV</a>
+                    </div>
+                    <div class="hero-image">
+                        <img src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=500&q=80" alt="James Kamerun">
+                    </div>
                 </div>
             </section>
         </div>
