@@ -1,0 +1,159 @@
+/* Mobile-first CSS with responsive design */
+
+/* CSS Reset and Base Styles */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/* Typography and Variables */
+:root {
+    --font-primary: 'Segoe UI', Arial, sans-serif;
+    --font-size-sm: 14px;
+    --font-size-base: 16px;
+    --font-size-md: 18px;
+    --font-size-lg: 24px;
+    --font-size-xl: 32px;
+    --font-size-xxl: 48px;
+    
+    /* Colors */
+    --color-primary: #2563eb;
+    --color-secondary: #1e293b;
+    --color-accent: #3b82f6;
+    --color-text: #334155;
+    --color-text-light: #64748b;
+    --color-bg: #f8fafc;
+    --color-white: #ffffff;
+    
+    /* Spacing */
+    --spacing-xs: 0.25rem;
+    --spacing-sm: 0.5rem;
+    --spacing-md: 1rem;
+    --spacing-lg: 1.5rem;
+    --spacing-xl: 2rem;
+    --spacing-xxl: 3rem;
+}
+
+/* General Styles */
+body {
+    font-family: var(--font-primary);
+    background-color: var(--color-bg);
+    color: var(--color-text);
+    line-height: 1.7;
+    font-size: var(--font-size-base);
+}
+
+.container {
+    width: 100%;
+    padding: 0 var(--spacing-md);
+    margin: 0 auto;
+    max-width: 100%;
+}
+
+/* Header and Navigation */
+header {
+    background: var(--color-secondary);
+    padding: var(--spacing-lg) 0;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.logo {
+    font-size: var(--font-size-lg);
+    font-weight: bold;
+    color: var(--color-accent);
+}
+
+.nav-list {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-sm);
+}
+
+nav a {
+    color: var(--color-white);
+    text-decoration: none;
+    padding: var(--spacing-sm);
+    border-radius: 4px;
+    transition: all 0.3s ease;
+}
+
+nav a.active {
+    background: var(--color-accent);
+}
+
+/* Main Content */
+.first-section {
+    padding: var(--spacing-xxl) 0;
+}
+
+.second-section {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-xl);
+}
+
+.img img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 8px;
+}
+
+/* Journal Entries */
+.journal-entries {
+    padding: var(--spacing-xl) 0;
+}
+
+.journal-entry {
+    background: var(--color-white);
+    padding: var(--spacing-lg);
+    border-radius: 8px;
+    margin-bottom: var(--spacing-lg);
+}
+
+/* Projects Grid */
+.projects-grid {
+    display: grid;
+    gap: var(--spacing-lg);
+    padding: var(--spacing-xl) 0;
+}
+
+.project-card {
+    background: var(--color-white);
+    padding: var(--spacing-lg);
+    border-radius: 8px;
+}
+
+/* Media Queries */
+@media (min-width: 768px) {
+    .container {
+        max-width: 720px;
+    }
+
+    .nav-list {
+        flex-direction: row;
+        gap: var(--spacing-md);
+    }
+
+    .second-section {
+        flex-direction: row;
+        align-items: center;
+    }
+
+    .projects-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (min-width: 1024px) {
+    .container {
+        max-width: 960px;
+    }
+}
+
+@media (min-width: 1200px) {
+    .container {
+        max-width: 1140px;
+    }
+}
