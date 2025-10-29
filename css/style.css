@@ -1,13 +1,23 @@
-/* Mobile-first CSS with responsive design */
+/* css/style.css - single canonical stylesheet
+   Merged from previous common + page-specific files.
+   Order / intent:
+     1) Reset & variables
+     2) Base typography & container
+     3) Header / nav / logo
+     4) Index (hero/profile) rules
+     5) About rules (page-specific)
+     6) Journal rules (page-specific)
+     7) Projects rules (page-specific)
+     8) Footer (kept last so it applies after other rules)
+*/
 
-/* CSS Reset and Base Styles */
+/* Reset and Base */
 * {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
 }
 
-/* Typography and Variables */
 :root {
     --font-primary: 'Segoe UI', Arial, sans-serif;
     --font-size-sm: 14px;
@@ -16,8 +26,6 @@
     --font-size-lg: 24px;
     --font-size-xl: 32px;
     --font-size-xxl: 48px;
-    
-    /* Colors */
     --color-primary: #2563eb;
     --color-secondary: #1e293b;
     --color-accent: #3b82f6;
@@ -25,8 +33,6 @@
     --color-text-light: #64748b;
     --color-bg: #f8fafc;
     --color-white: #ffffff;
-    
-    /* Spacing */
     --spacing-xs: 0.25rem;
     --spacing-sm: 0.5rem;
     --spacing-md: 1rem;
@@ -35,7 +41,6 @@
     --spacing-xxl: 3rem;
 }
 
-/* General Styles */
 body {
     font-family: var(--font-primary);
     background-color: var(--color-bg);
@@ -70,7 +75,7 @@ header .container {
     color: var(--color-accent);
 }
 
-/* Title icon styling - small image placed next to the page H1 */
+/* Title icon - small image placed near headings when used */
 .title-icon {
     width: 44px;
     height: 44px;
@@ -80,7 +85,6 @@ header .container {
     margin-right: 0.75rem;
 }
 
-/* Make title icon a bit smaller on very small screens */
 @media (max-width: 480px) {
     .title-icon {
         width: 36px;
@@ -119,7 +123,7 @@ nav a.active {
     color: var(--color-white);
 }
 
-/* Main Content */
+/* --- Index / Hero / Profile (page-specific) --- */
 .first-section {
     padding: var(--spacing-xxl) 0;
 }
@@ -130,7 +134,10 @@ nav a.active {
     gap: var(--spacing-xl);
 }
 
-/* Hero image container (used in the hero/intro area) */
+.third-section {
+    padding: 0; /* text block inside hero */
+}
+
 .hero-image {
     display: block;
     margin: 0 auto;
@@ -145,7 +152,18 @@ nav a.active {
     display: block;
 }
 
-/* Journal Entries */
+/* --- About page (page-specific, currently minimal) --- */
+.about-profile {
+    padding: var(--spacing-xl) 0;
+}
+
+.about-profile .bio {
+    background: var(--color-white);
+    padding: var(--spacing-lg);
+    border-radius: 8px;
+}
+
+/* --- Journal page (page-specific) --- */
 .journal-entries {
     padding: var(--spacing-xl) 0;
 }
@@ -157,7 +175,7 @@ nav a.active {
     margin-bottom: var(--spacing-lg);
 }
 
-/* Projects Grid */
+/* --- Projects page (page-specific) --- */
 .projects-grid {
     display: grid;
     gap: var(--spacing-lg);
@@ -214,7 +232,7 @@ nav a.active {
     }
 }
 
-/* Footer Styles */
+/* Footer (kept last) */
 .site-footer {
     background-color: #799985; 
     color: #0412ce; 

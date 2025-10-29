@@ -8,9 +8,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>About Me - Learning Journal PWA</title>
-    <!-- Shared styles then about-specific styles -->
-    <link rel="stylesheet" href="css/common.css">
-    <link rel="stylesheet" href="css/about.css">
+    <!-- Single canonical stylesheet -->
+    <link rel="stylesheet" href="css/style.css">
     <link rel="icon" href="image/mario 111.png" type="image/png">
     <meta name="theme-color" content="#16a34a">
 </head>
@@ -19,32 +18,31 @@
     <header>
         <div class="container">
             <div class="logo">MY JOURNAL</div>
-            <body>
-            <!-- HEADER: site logo and navigation -->
-            <header>
-                <div class="container">
-                    <div class="logo">MY JOURNAL</div>
-                    <nav>
-                        <ul class="nav-list">
-                            <li><a href="index.html">Home</a></li>
-                            <li><a href="journal.html">My Journal</a></li>
-                            <li><a href="about.html" class="active">About</a></li>
-                            <li><a href="projects.html">Projects</a></li>
-                        </ul>
-                    </nav>
-                </div>
-            </header>
-                <!-- ABOUT: personal profile, education and skills -->
+            <nav>
+                <ul class="nav-list">
+                    <li><a href="index.html">Home</a></li>
+                    <li><a href="journal.html">My Journal</a></li>
+                    <li><a href="about.html" class="active">About</a></li>
+                    <li><a href="projects.html">Projects</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <main>
+        <div class="container">
+            <!-- ABOUT: personal profile, education and skills -->
+            <section class="about-profile">
                 <h1>About Me</h1>
                 <div class="about-content">
                     <div class="profile-info">
                         <h2>Personal Profile</h2>
                         <p>I am a Computer Science student at UCA's School of Games and Creative Technology, passionate about mobile application development and creative computing.</p>
-                        
+
                         <h2>Education</h2>
                         <p>BSc (Hons) Computer Science<br>
                         University for the Creative Arts</p>
-                        
+
                         <h2>Skills</h2>
                         <ul class="skills-list">
                             <li>HTML/CSS</li>
