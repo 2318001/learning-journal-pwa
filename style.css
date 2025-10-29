@@ -38,7 +38,7 @@ header .container {
 }
 
 /* Navigation */
-nav ul {
+.icon {
     display: flex;
     list-style: none;
 }
@@ -62,26 +62,26 @@ nav a.active {
 }
 
 /* Hero Section */
-.hero {
+.first-section {
     padding: 64px 0;
 }
 
-.hero-content {
+.second-section {
     display: flex;
     align-items: center;
     gap: 40px;
 }
 
-.hero-text {
+.third-section {
     flex: 1;
 }
 
-.hero-image {
+.img {
     flex: 1;
     max-width: 500px;
 }
 
-.hero-image img {
+.img {
     width: 100%;
     height: auto;
     border-radius: 10px;
