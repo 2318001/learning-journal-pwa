@@ -68,22 +68,25 @@ header .container {
     font-size: var(--font-size-lg);
     font-weight: bold;
     color: var(--color-accent);
-    display: flex;                 /* align logo text and icon */
-    align-items: center;
-    gap: var(--spacing-sm);
 }
 
-/* Logo icon styling */
-.logo-icon {
-    width: 48px;
-    height: 48px;
+/* Title icon styling - small image placed next to the page H1 */
+.title-icon {
+    width: 44px;
+    height: 44px;
     object-fit: cover;
     border-radius: 8px;
-    display: inline-block;
+    vertical-align: middle;
+    margin-right: 0.75rem;
 }
 
-.logo-text {
-    display: inline-block;
+/* Make title icon a bit smaller on very small screens */
+@media (max-width: 480px) {
+    .title-icon {
+        width: 36px;
+        height: 36px;
+        margin-right: 0.5rem;
+    }
 }
 
 nav {
@@ -194,7 +197,7 @@ nav a.active {
 /* Footer Styles */
 .site-footer {
     background-color: #16a34a; /* green */
-    color: #cb1717;
+    color: #ffffff; /* white text */
     padding: var(--spacing-md) 0;
 }
 
@@ -205,6 +208,6 @@ nav a.active {
 }
 
 .site-footer p {
-    margin: 10px;
+    margin: 0;
     font-size: 14px;
 }
