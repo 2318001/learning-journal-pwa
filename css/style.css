@@ -216,8 +216,8 @@ nav a.active {
 
 /* Footer Styles */
 .site-footer {
-    background-color: #16a34a; /* green */
-    color: #ffffff; /* white text */
+    background-color: #799985; 
+    color: #0412ce; 
     padding: var(--spacing-md) 0;
 }
 
@@ -229,5 +229,5 @@ nav a.active {
 
 .site-footer p {
     margin: 0;
-    font-size: 14px;
+    font-size: 20px;
 }
