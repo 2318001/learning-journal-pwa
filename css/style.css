@@ -68,6 +68,22 @@ header .container {
     font-size: var(--font-size-lg);
     font-weight: bold;
     color: var(--color-accent);
+    display: flex;                 /* align logo text and icon */
+    align-items: center;
+    gap: var(--spacing-sm);
+}
+
+/* Logo icon styling */
+.logo-icon {
+    width: 48px;
+    height: 48px;
+    object-fit: cover;
+    border-radius: 8px;
+    display: inline-block;
+}
+
+.logo-text {
+    display: inline-block;
 }
 
 nav {
