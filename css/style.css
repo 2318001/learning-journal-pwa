@@ -1,251 +1,673 @@
-/* css/style.css - single canonical stylesheet
-   Merged from previous common + page-specific files.
-   Order / intent:
-     1) Reset & variables
-     2) Base typography & container
-     3) Header / nav / logo
-     4) Index (hero/profile) rules
-     5) About rules (page-specific)
-     6) Journal rules (page-specific)
-     7) Projects rules (page-specific)
-     8) Footer (kept last so it applies after other rules)
-*/
-
-/* Reset and Base */
+/* ============================================
+   //GLOBAL STYLES
+   ============================================ */
 * {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-}
-
-:root {
-    --font-primary: 'Segoe UI', Arial, sans-serif;
-    --font-size-sm: 14px;
-    --font-size-base: 16px;
-    --font-size-md: 18px;
-    --font-size-lg: 24px;
-    --font-size-xl: 32px;
-    --font-size-xxl: 48px;
-    --color-primary: #2563eb;
-    --color-secondary: #1e293b;
-    --color-accent: #3b82f6;
-    --color-text: #334155;
-    --color-text-light: #64748b;
-    --color-bg: #f8fafc;
-    --color-white: #ffffff;
-    --spacing-xs: 0.25rem;
-    --spacing-sm: 0.5rem;
-    --spacing-md: 1rem;
-    --spacing-lg: 1.5rem;
-    --spacing-xl: 2rem;
-    --spacing-xxl: 3rem;
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
 }
 
 body {
-    font-family: var(--font-primary);
-    background-color: var(--color-bg);
-    color: var(--color-text);
-    line-height: 1.7;
-    font-size: var(--font-size-base);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  line-height: 1.6;
+  color: #4d9d99;
+  background: #f5f5f5;
+  min-height: 100vh;
 }
 
 .container {
-    width: 100%;
-    padding: 0 var(--spacing-md);
-    margin: 0 auto;
-    max-width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 20px;
 }
 
-/* Header and Navigation */
+/* ============================================
+   HEADER AND NAVIGATION
+   ============================================ */
 header {
-    background: var(--color-secondary);
-    padding: var(--spacing-lg) 0;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  background: white;
+  padding: 1rem 0;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  position: sticky;
+  top: 0;
+  z-index: 100;
 }
 
 header .container {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 1rem;
 }
 
-.logo {
-    font-size: var(--font-size-lg);
-    font-weight: bold;
-    color: var(--color-accent);
+.logo-text {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #0a8d31;
 }
 
-/* Title icon - small image placed near headings when used */
-.title-icon {
-    width: 44px;
-    height: 44px;
-    object-fit: cover;
-    border-radius: 8px;
-    vertical-align: middle;
-    margin-right: 0.75rem;
+/* Navigation with 3 consistent items */
+nav ul.nav-list {
+  list-style: none;
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
 }
 
-@media (max-width: 480px) {
-    .title-icon {
-        width: 36px;
-        height: 36px;
-        margin-right: 0.5rem;
-    }
+nav ul.nav-list li a {
+  color: #374867;
+  text-decoration: none;
+  font-weight: 600;
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
 }
 
-nav {
-    margin-left: auto; /* Push navigation to the right */
+nav ul.nav-list li a:hover,
+nav ul.nav-list li a.active {
+  background: #2c5282;
+  color: white;
 }
 
-.nav-list {
-    list-style: none;
-    display: flex;
-    gap: var(--spacing-md);
-    justify-content: flex-end; /* Align items to the right */
+/* ============================================
+   DATE AND TIME BANNER
+   ============================================ */
+.page-datetime-banner {
+  background: #2c5282;
+  padding: 0.75rem 0;
 }
 
-nav a {
-    color: var(--color-white);
-    text-decoration: none;
-    padding: var(--spacing-sm) var(--spacing-md);
-    border-radius: 4px;
-    transition: all 0.3s ease;
-    font-weight: 500;
+.page-datetime {
+  text-align: center;
+  color: white;
+  font-size: 1rem;
+  font-weight: 600;
 }
 
-nav a:hover {
-    background: rgba(255, 255, 255, 0.1);
-    color: var(--color-accent);
+/* ============================================
+   MAIN CONTENT - HOME PAGE
+   ============================================ */
+main {
+  padding: 2rem 0;
 }
 
-nav a.active {
-    background: var(--color-accent);
-    color: var(--color-white);
-}
-
-/* --- Index / Hero / Profile (page-specific) --- */
 .first-section {
-    padding: var(--spacing-xxl) 0;
+  background: white;
+  border-radius: 8px;
+  padding: 2rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
 .second-section {
-    display: flex;
-    flex-direction: column;
-    gap: var(--spacing-xl);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 2rem;
+  flex-wrap: wrap;
 }
 
 .third-section {
-    padding: 0; /* text block inside hero */
+  flex: 1;
+  min-width: 300px;
 }
 
+.third-section h1 {
+  font-size: 2.5rem;
+  color: #05c8bb;
+  margin-bottom: 1rem;
+  font-weight: 700;
+}
+
+.description {
+  font-size: 1.1rem;
+  color: #08b06a;
+  line-height: 1.6;
+  margin-bottom: 1.5rem;
+}
+
+/* Hero image styling */
 .hero-image {
-    display: block;
-    margin: 0 auto;
-    max-width: 100%;
+  flex-shrink: 0;
 }
 
 .profile-image {
-    width: 100%;
-    height: auto;
-    border-radius: 12px;
-    box-shadow: 0 8px 20px rgba(0,0,0,0.08);
-    display: block;
+  width: 250px;
+  height: 250px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 4px solid white;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
 
-/* --- About page (page-specific, currently minimal) --- */
-.about-profile {
-    padding: var(--spacing-xl) 0;
+/* ============================================
+   BUTTONS
+   ============================================ */
+.cta-btn {
+  padding: 0.75rem 1.5rem;
+  border: none;
+  border-radius: 6px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
 }
 
-.about-profile .bio {
-    background: var(--color-white);
-    padding: var(--spacing-lg);
-    border-radius: 8px;
+.cta-btn.primary {
+  background: #2c5282;
+  color: white;
 }
 
-/* --- Journal page (page-specific) --- */
-.journal-entries {
-    padding: var(--spacing-xl) 0;
+.cta-btn.primary:hover {
+  background: #2a4365;
 }
 
-.journal-entry {
-    background: var(--color-white);
-    padding: var(--spacing-lg);
-    border-radius: 8px;
-    margin-bottom: var(--spacing-lg);
+button {
+  padding: 0.75rem 1.5rem;
+  border: none;
+  border-radius: 6px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
 }
 
-/* --- Projects page (page-specific) --- */
-.projects-grid {
-    display: grid;
-    gap: var(--spacing-lg);
-    padding: var(--spacing-xl) 0;
+button[type="submit"] {
+  background: #2c5282;
+  color: white;
 }
 
-.project-card {
-    background: var(--color-white);
-    padding: var(--spacing-lg);
-    border-radius: 8px;
+button[type="submit"]:hover {
+  background: #2a4365;
 }
 
-/* Media Queries */
-@media (min-width: 768px) {
-    .container {
-        max-width: 720px;
-    }
-
-    .nav-list {
-        flex-direction: row;
-        gap: var(--spacing-md);
-    }
-
-    .second-section {
-        flex-direction: row;
-        align-items: center;
-    }
-
-    /* Place the text on the left and image on the right */
-    .third-section {
-        flex: 1 1 60%;
-    }
-
-    .hero-image {
-        flex: 0 0 40%;
-        max-width: 40%;
-        order: 2; /* ensure image is on the right */
-    }
-
-    .projects-grid {
-        grid-template-columns: repeat(2, 1fr);
-    }
+/* Edit button for hero section */
+.edit-btn {
+  background: #2c5282;
+  color: white;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 1rem;
 }
 
-@media (min-width: 1024px) {
-    .container {
-        max-width: 960px;
-    }
+.edit-btn:hover {
+  background: #2a4365;
 }
 
-@media (min-width: 1200px) {
-    .container {
-        max-width: 1140px;
-    }
+/* Added upload button styling for CV */
+.upload-btn {
+  background: #48bb78;
+  color: white;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 1rem;
+  margin-left: 0.5rem;
 }
 
-/* Footer  */
+.upload-btn:hover {
+  background: #38a169;
+}
+
+/* CV actions container */
+.cv-actions {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.edit-section-header {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.edit-section-header h1 {
+  margin-bottom: 0;
+}
+
+/* Settings button (+ icon) to toggle form */
+.settings-btn {
+  background: #48bb78;
+  color: white;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 1.5rem;
+  min-width: 45px;
+  height: 45px;
+}
+
+.settings-btn:hover {
+  background: #38a169;
+}
+
+/* Added reset button styling */
+.reset-btn {
+  background: #e53e3e;
+  color: rgb(200, 14, 14);
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  font-weight: 600;
+  height: 45px;
+}
+
+.reset-btn:hover {
+  background: #38950a;
+}
+
+/* ============================================
+   FOOTER
+   ============================================ */
 .site-footer {
-    background-color: #799985; 
-    color: #0412ce; 
-    padding: var(--spacing-md) 0;
+  background: #4f6ea3;
+  color: white;
+  text-align: center;
+  padding: 1.5rem 0;
+  margin-top: 3rem;
 }
 
-.site-footer .container {
-    display: flex;
+/* ============================================
+   MODAL STYLES
+   ============================================ */
+.modal {
+  display: none;
+  position: fixed;
+  z-index: 1000;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+  background-color: rgba(0, 0, 0, 0.5);
+}
+
+.modal-content {
+  background: white;
+  margin: 2% auto;
+  padding: 2rem;
+  border-radius: 8px;
+  width: 90%;
+  max-width: 900px;
+  max-height: 85vh;
+  overflow-y: auto;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+}
+
+.close-button {
+  color: #718096;
+  float: right;
+  font-size: 1.75rem;
+  font-weight: bold;
+  cursor: pointer;
+  line-height: 1;
+}
+
+.close-button:hover {
+  color: #2c5282;
+}
+
+/* DateTime display in modals */
+.datetime {
+  background: #328a0f;
+  color: white;
+  padding: 1rem;
+  border-radius: 6px;
+  text-align: center;
+  margin-bottom: 1.5rem;
+  font-weight: 600;
+}
+
+/* Modal header with title and settings button */
+.modal-header-actions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+}
+
+.modal-header-actions h2 {
+  margin: 0;
+  color: #2c5282;
+}
+
+.gradient-text {
+  color: #2c5282;
+  text-align: center;
+  font-size: 2rem;
+  font-weight: 700;
+  margin-bottom: 2rem;
+}
+
+/* ============================================
+   EMPTY STATE MESSAGE
+   ============================================ */
+.empty-state {
+  text-align: center;
+  padding: 3rem 1rem;
+  color: #718096;
+  font-size: 1.1rem;
+  background: #f7fafc;
+  border-radius: 6px;
+  border: 2px dashed #cbd5e0;
+}
+
+/* ============================================
+   FORMS
+   ============================================ */
+.journal-form,
+.project-form {
+  margin-bottom: 2rem;
+  padding: 1.5rem;
+  background: #f7fafc;
+  border-radius: 6px;
+}
+
+.form-group {
+  margin-bottom: 1.25rem;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-weight: 600;
+  color: #2d3748;
+}
+
+.form-group input[type="text"],
+.form-group textarea,
+.form-group input[type="file"] {
+  width: 100%;
+  padding: 0.75rem;
+  border: 2px solid #e2e8f0;
+  border-radius: 6px;
+  font-size: 1rem;
+  font-family: inherit;
+}
+
+.form-group input[type="text"]:focus,
+.form-group textarea:focus {
+  outline: none;
+  border-color: #2c5282;
+}
+
+.form-group textarea {
+  resize: vertical;
+  min-height: 150px;
+}
+
+/* Edit forms styling */
+.edit-form {
+  padding: 1rem 0;
+}
+
+.edit-form .form-group {
+  margin-bottom: 1.25rem;
+}
+
+.edit-form label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-weight: 600;
+  color: #2d3748;
+}
+
+.edit-form input[type="text"],
+.edit-form textarea {
+  width: 100%;
+  padding: 0.75rem;
+  border: 2px solid #e2e8f0;
+  border-radius: 6px;
+  font-size: 1rem;
+  font-family: inherit;
+}
+
+.edit-form input[type="text"]:focus,
+.edit-form textarea:focus {
+  outline: none;
+  border-color: #2c5282;
+}
+
+/* ============================================
+   JOURNAL AND PROJECT ENTRIES
+   ============================================ */
+.journal-entries,
+.projects-list {
+  margin-top: 1.5rem;
+}
+
+.journal-entry,
+.project-entry {
+  background: white;
+  padding: 1.5rem;
+  border-radius: 6px;
+  margin-bottom: 1rem;
+  border-left: 4px solid #2c5282;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.journal-entry h3,
+.project-entry h3 {
+  color: #2c5282;
+  margin-bottom: 0.75rem;
+  font-size: 1.25rem;
+  font-weight: 600;
+}
+
+.journal-entry p,
+.project-entry p {
+  color: #4a5568;
+  margin-bottom: 0.75rem;
+  line-height: 1.6;
+}
+
+.journal-entry small,
+.project-entry small {
+  color: #718096;
+  font-size: 0.875rem;
+}
+
+/* Files list for projects */
+.files-list {
+  list-style: none;
+  margin: 0.75rem 0;
+  padding: 0;
+}
+
+.files-list li {
+  background: #edf2f7;
+  padding: 0.5rem 0.75rem;
+  margin-bottom: 0.5rem;
+  border-radius: 4px;
+  border-left: 3px solid #2c5282;
+  font-size: 0.875rem;
+  color: #4a5568;
+}
+
+/* Added clickable file link styling */
+.file-link {
+  color: #2c5282;
+  text-decoration: none;
+  font-weight: 600;
+  display: inline-block;
+  transition: color 0.2s;
+}
+
+.file-link:hover {
+  color: #1a365d;
+  text-decoration: underline;
+}
+
+/* ============================================
+   ABOUT AND CV CONTENT STYLES
+   ============================================ */
+.about-content,
+.cv-content {
+  padding: 1.5rem;
+  background: #f7fafc;
+  border-radius: 6px;
+  line-height: 1.8;
+  color: #4a5568;
+}
+
+.cv-content h3 {
+  color: #2c5282;
+  margin-top: 1.5rem;
+  margin-bottom: 0.75rem;
+  font-size: 1.25rem;
+}
+
+.cv-content h3:first-child {
+  margin-top: 0;
+}
+
+.cv-content p {
+  margin-bottom: 1rem;
+}
+
+/* CV file display styling */
+.cv-file-display {
+  margin-top: 1.5rem;
+  margin-bottom: 1.5rem;
+  padding: 1.5rem;
+  background: #edf2f7;
+  border-radius: 6px;
+  border-left: 4px solid #48bb78;
+}
+
+.cv-file-display p {
+  margin: 0 0 0.5rem 0;
+  color: #2d3748;
+  font-size: 1.1rem;
+}
+
+/* Added prominent styling for View CV button */
+.cv-file-display #viewCvBtn {
+  width: 100%;
+  padding: 1rem;
+  font-size: 1.1rem;
+  background: #48bb78;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 600;
+}
+
+.cv-file-display #viewCvBtn:hover {
+  background: #38a169;
+}
+
+/* ============================================
+   MOBILE FLOATING ACTION BUTTON (FAB)
+   ============================================ */
+/* Added floating action button for mobile to easily add journal/projects */
+.mobile-fab {
+  display: none;
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  width: 60px;
+  height: 60px;
+  background: #48bb78;
+  color: white;
+  border: none;
+  border-radius: 50%;
+  font-size: 2rem;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  z-index: 999;
+  align-items: center;
+  justify-content: center;
+}
+
+.mobile-fab:hover {
+  background: #38a169;
+  transform: scale(1.1);
+}
+
+.mobile-fab:active {
+  transform: scale(0.95);
+}
+
+/* ============================================
+   RESPONSIVE DESIGN
+   ============================================ */
+@media (max-width: 768px) {
+  header .container {
+    flex-direction: column;
+    text-align: center;
+  }
+
+  nav ul.nav-list {
     justify-content: center;
-    align-items: center;
+  }
+
+  .third-section h1 {
+    font-size: 2rem;
+  }
+
+  .second-section {
+    flex-direction: column;
+    text-align: center;
+  }
+
+  .profile-image {
+    width: 200px;
+    height: 200px;
+  }
+
+  .modal-content {
+    width: 95%;
+    padding: 1.5rem;
+  }
+
+  .edit-section-header,
+  .modal-header-actions {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.75rem;
+  }
+
+  /* Show floating action button on mobile for easier access */
+  .mobile-fab {
+    display: flex;
+  }
+
+  /* Hide desktop settings button on mobile since we have FAB */
+  .settings-btn {
+    display: none;
+  }
 }
 
-.site-footer p {
-    margin: 0;
-    font-size: 20px;
+@media (max-width: 480px) {
+  .logo-text {
+    font-size: 1.25rem;
+  }
+
+  .third-section h1 {
+    font-size: 1.75rem;
+  }
+
+  .first-section {
+    padding: 1.5rem;
+  }
+
+  .gradient-text {
+    font-size: 1.5rem;
+  }
+
+  /* Adjust FAB size for smaller screens */
+  .mobile-fab {
+    width: 55px;
+    height: 55px;
+    font-size: 1.75rem;
+    bottom: 15px;
+    right: 15px;
+  }
 }
