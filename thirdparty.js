@@ -214,7 +214,7 @@ class YouTubeManager {
     }
   }
 }
-
+//new
 // Export for use in other modules
 if (typeof window !== "undefined") {
   window.YouTubeManager = YouTubeManager
