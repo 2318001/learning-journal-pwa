@@ -165,6 +165,11 @@ class ProjectsManager {
     this.projectsList = document.getElementById("projectsList")
     this.projectsEmptyState = document.getElementById("projectsEmptyState")
 
+    // ADDED: File upload elements
+    this.projectFileInput = document.getElementById("projectFile")
+    this.projectFileBtn = document.getElementById("projectFileBtn")
+    this.projectFileName = document.getElementById("projectFileName")
+
     this.init()
   }
 
@@ -179,6 +184,22 @@ class ProjectsManager {
     }
     if (this.resetProjectsBtn) {
       this.resetProjectsBtn.addEventListener("click", () => this.resetProjects())
+    }
+    // ADDED: File upload event listeners
+    if (this.projectFileBtn && this.projectFileInput) {
+      this.projectFileBtn.addEventListener("click", () => {
+        this.projectFileInput.click()
+      })
+    }
+
+    if (this.projectFileInput) {
+      this.projectFileInput.addEventListener("change", () => {
+        if (this.projectFileInput.files.length > 0) {
+          this.projectFileName.textContent = this.projectFileInput.files[0].name
+        } else {
+          this.projectFileName.textContent = "No file chosen"
+        }
+      })
     }
   }
 
@@ -221,13 +242,30 @@ class ProjectsManager {
       timestamp: new Date().toISOString(),
       dateString: new Date().toLocaleString(),
     }
+    // ADDED: Handle file upload
+    if (this.projectFileInput && this.projectFileInput.files.length > 0) {
+      const file = this.projectFileInput.files[0]
+      project.fileName = file.name
+      project.fileType = file.type
+      project.fileSize = file.size
 
+      // Convert file to base64 for storage
+      try {
+        project.fileData = await this.readFileAsDataURL(file)
+      } catch (error) {
+        console.error("Error reading file:", error)
+        alert("Error reading the file. Please try again.")
+        return
+      }
+    }
     try {
       if (this.storage && typeof this.storage.addToIndexedDB === "function") {
         await this.storage.addToIndexedDB("projects", project)
       }
       this.projectForm.reset()
       if (this.projectForm) this.projectForm.style.display = "none"
+
+      this.resetFileInput()
 
       const localProjects = this.storage.getLocal("projects") || []
       localProjects.unshift(project)
@@ -237,6 +275,26 @@ class ProjectsManager {
     } catch (error) {
       console.error("Error saving project:", error)
       alert("Error saving project. Please try again.")
+    }
+  }
+
+  // ADDED: Method to read file as data URL
+  readFileAsDataURL(file) {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader()
+      reader.onload = (event) => resolve(event.target.result)
+      reader.onerror = (error) => reject(error)
+      reader.readAsDataURL(file)
+    })
+  }
+
+  // ADDED: Method to reset file input
+  resetFileInput() {
+    if (this.projectFileInput) {
+      this.projectFileInput.value = ""
+    }
+    if (this.projectFileName) {
+      this.projectFileName.textContent = "No file chosen"
     }
   }
 
@@ -269,6 +327,7 @@ class ProjectsManager {
                 <small>${project.dateString}</small>
               </div>
               <p>${this.escapeHtml(project.description)}</p>
+              ${project.fileName ? `<p class="project-file"><strong>File:</strong> ${this.escapeHtml(project.fileName)} (${this.formatFileSize(project.fileSize)})</p>` : ""}
             </div>
           `,
           )
@@ -277,6 +336,15 @@ class ProjectsManager {
     } catch (error) {
       console.error("Error loading projects:", error)
     }
+  }
+
+  // ADDED: Method to format file size
+  formatFileSize(bytes) {
+    if (bytes === 0) return "0 Bytes"
+    const k = 1024
+    const sizes = ["Bytes", "KB", "MB", "GB"]
+    const i = Math.floor(Math.log(bytes) / Math.log(k))
+    return Number.parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + " " + sizes[i]
   }
 
   async resetProjects() {
@@ -386,6 +454,7 @@ function setupModalSystem(managers = {}) {
 
     button.addEventListener("click", (e) => {
       e.preventDefault()
+      e.stopPropagation()
       if (
         modalId === "journalModal" &&
         managers.journalManager &&
@@ -413,12 +482,12 @@ function initializeOtherModals(storage) {
   const profileImage = document.getElementById("profileImage")
 
   if (editProfilePicBtn && profilePicInput && profileImage) {
-    console.log("[v0] Profile pic button found, attaching click handler")
+    console.log("Profile pic button found, attaching click handler")
 
     editProfilePicBtn.addEventListener("click", (e) => {
       e.preventDefault()
       e.stopPropagation()
-      console.log("[v0] Profile pic button clicked, triggering file input")
+      console.log("Profile pic button clicked, triggering file input")
       profilePicInput.click()
     })
 
@@ -429,7 +498,7 @@ function initializeOtherModals(storage) {
         reader.onload = (event) => {
           profileImage.src = event.target.result
           storage.setLocal("profilePicture", event.target.result)
-          console.log("[v0] Profile picture updated")
+          console.log("Profile picture updated")
         }
         reader.readAsDataURL(file)
       } else {
@@ -440,10 +509,10 @@ function initializeOtherModals(storage) {
     const savedProfilePic = storage.getLocal("profilePicture")
     if (savedProfilePic) {
       profileImage.src = savedProfilePic
-      console.log("[v0] Profile picture loaded from storage")
+      console.log("Profile picture loaded from storage")
     }
   } else {
-    console.error("[v0] Profile picture elements not found!")
+    console.error("Profile picture elements not found!")
   }
 
   // About section
@@ -577,7 +646,7 @@ function initializeOtherModals(storage) {
       if (cvFileDisplay) cvFileDisplay.style.display = "none"
       if (cvFileName) cvFileName.textContent = ""
       alert("CV file deleted successfully!")
-      console.log("[v0] CV deleted")
+      console.log(" CV deleted")
     }
   })
 
