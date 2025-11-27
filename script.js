@@ -12,10 +12,6 @@ class JournalManager {
     this.journalEmptyState = document.getElementById("journalEmptyState")
     this.validationManager = null
 
-    // Edit mode state
-    this.isEditMode = false
-    this.currentEditId = null
-
     this.init()
   }
 
@@ -30,29 +26,6 @@ class JournalManager {
     }
     if (this.resetJournalBtn) {
       this.resetJournalBtn.addEventListener("click", () => this.resetJournals())
-    }
-
-    // Add cancel edit button if it doesn't exist
-    this.addCancelEditButton()
-  }
-
-  addCancelEditButton() {
-    // Check if cancel button already exists
-    if (!document.getElementById('cancelEditBtn')) {
-      const cancelBtn = document.createElement('button')
-      cancelBtn.id = 'cancelEditBtn'
-      cancelBtn.type = 'button'
-      cancelBtn.textContent = 'Cancel Edit'
-      cancelBtn.style.display = 'none'
-      cancelBtn.classList.add('cancel-edit-btn')
-      
-      cancelBtn.addEventListener('click', () => {
-        this.cancelEdit()
-      })
-      
-      if (this.journalForm) {
-        this.journalForm.appendChild(cancelBtn)
-      }
     }
   }
 
@@ -116,59 +89,30 @@ class JournalManager {
       dateString: new Date().toLocaleString(),
     }
 
-    // Add ID for editing
-    if (this.isEditMode && this.currentEditId) {
-      entry.id = this.currentEditId
-    } else {
-      entry.id = 'journal_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9)
-    }
-
     try {
+      // FIX: Better storage handling with fallbacks
       let saveSuccessful = false
       
-      if (this.isEditMode && this.currentEditId) {
-        // Update existing entry
-        if (this.storage && typeof this.storage.updateInIndexedDB === "function") {
-          try {
-            await this.storage.updateInIndexedDB("journals", this.currentEditId, entry)
-            saveSuccessful = true
-          } catch (dbError) {
-            console.warn("IndexedDB update failed, falling back to local storage:", dbError)
-            const localJournals = this.storage?.getLocal?.("journals") || []
-            const index = localJournals.findIndex(item => item.id === this.currentEditId)
-            if (index !== -1) {
-              localJournals[index] = entry
-              this.storage?.setLocal?.("journals", localJournals)
-              saveSuccessful = true
-            }
-          }
+      if (this.storage && typeof this.storage.addToIndexedDB === "function") {
+        try {
+          await this.storage.addToIndexedDB("journals", entry)
+          saveSuccessful = true
+        } catch (dbError) {
+          console.warn("IndexedDB save failed, falling back to local storage:", dbError)
         }
-      } else {
-        // Add new entry
-        if (this.storage && typeof this.storage.addToIndexedDB === "function") {
-          try {
-            await this.storage.addToIndexedDB("journals", entry)
-            saveSuccessful = true
-          } catch (dbError) {
-            console.warn("IndexedDB save failed, falling back to local storage:", dbError)
-            const localJournals = this.storage?.getLocal?.("journals") || []
-            localJournals.unshift(entry)
-            this.storage?.setLocal?.("journals", localJournals)
-            saveSuccessful = true
-          }
-        }
+      }
+      
+      if (!saveSuccessful) {
+        const localJournals = this.storage?.getLocal?.("journals") || []
+        localJournals.unshift(entry)
+        this.storage?.setLocal?.("journals", localJournals)
       }
 
-      if (saveSuccessful) {
-        this.journalForm.reset()
-        this.cancelEdit() // Reset edit mode
-        if (this.journalForm) this.journalForm.style.display = "none"
-        const charCount = document.getElementById("charCount")
-        if (charCount) charCount.textContent = "0"
-        await this.loadJournals()
-      } else {
-        throw new Error("Failed to save journal entry")
-      }
+      this.journalForm.reset()
+      if (this.journalForm) this.journalForm.style.display = "none"
+      const charCount = document.getElementById("charCount")
+      if (charCount) charCount.textContent = "0"
+      await this.loadJournals()
     } catch (error) {
       console.error("Error saving journal entry:", error)
       alert("Error saving journal entry. Please try again.")
@@ -210,157 +154,20 @@ class JournalManager {
         this.journalEntries.innerHTML = journals
           .map(
             (entry) => `
-            <div class="journal-entry" data-id="${entry.id || ''}">
+            <div class="journal-entry">
               <div class="entry-header">
                 <h3>${this.escapeHtml(entry.title)}</h3>
-                <div class="entry-actions">
-                  <small>${entry.dateString || new Date(entry.timestamp).toLocaleString()}</small>
-                  <button class="edit-btn" data-id="${entry.id || ''}">Edit</button>
-                  <button class="delete-btn" data-id="${entry.id || ''}">Delete</button>
-                </div>
+                <small>${entry.dateString || new Date(entry.timestamp).toLocaleString()}</small>
               </div>
               <p>${this.escapeHtml(entry.content)}</p>
             </div>
           `
           )
           .join("")
-
-        // Add event listeners to edit and delete buttons
-        this.journalEntries.querySelectorAll('.edit-btn').forEach(btn => {
-          btn.addEventListener('click', (e) => {
-            e.stopPropagation()
-            const id = btn.getAttribute('data-id')
-            this.editEntry(id)
-          })
-        })
-
-        this.journalEntries.querySelectorAll('.delete-btn').forEach(btn => {
-          btn.addEventListener('click', (e) => {
-            e.stopPropagation()
-            const id = btn.getAttribute('data-id')
-            this.deleteEntry(id)
-          })
-        })
       }
     } catch (error) {
       console.error("Error loading journals:", error)
       if (this.journalEmptyState) this.journalEmptyState.style.display = "block"
-    }
-  }
-
-  async editEntry(id) {
-    try {
-      let journals = []
-      
-      if (this.storage && typeof this.storage.getAllFromIndexedDB === "function") {
-        try {
-          journals = await this.storage.getAllFromIndexedDB("journals")
-        } catch (dbError) {
-          journals = this.storage?.getLocal?.("journals") || []
-        }
-      } else {
-        journals = this.storage?.getLocal?.("journals") || []
-      }
-
-      const entry = journals.find(item => item.id === id)
-      if (!entry) {
-        alert("Entry not found")
-        return
-      }
-
-      // Populate form with entry data
-      const titleInput = document.getElementById("journalTitle")
-      const contentInput = document.getElementById("journalContent")
-
-      if (titleInput && contentInput) {
-        titleInput.value = entry.title
-        contentInput.value = entry.content
-        
-        // Update character count if exists
-        const charCount = document.getElementById("charCount")
-        if (charCount) {
-          charCount.textContent = entry.content.length
-        }
-      }
-
-      // Set edit mode
-      this.isEditMode = true
-      this.currentEditId = id
-
-      // Show form and cancel button
-      if (this.journalForm) {
-        this.journalForm.style.display = "block"
-      }
-      
-      const cancelBtn = document.getElementById('cancelEditBtn')
-      if (cancelBtn) {
-        cancelBtn.style.display = 'inline-block'
-      }
-
-      // Scroll to form
-      this.journalForm?.scrollIntoView({ behavior: 'smooth' })
-    } catch (error) {
-      console.error("Error editing journal entry:", error)
-      alert("Error loading entry for editing. Please try again.")
-    }
-  }
-
-  async deleteEntry(id) {
-    if (!confirm("Are you sure you want to delete this journal entry? This cannot be undone.")) {
-      return
-    }
-
-    try {
-      let deleteSuccessful = false
-      
-      if (this.storage && typeof this.storage.deleteFromIndexedDB === "function") {
-        try {
-          await this.storage.deleteFromIndexedDB("journals", id)
-          deleteSuccessful = true
-        } catch (dbError) {
-          console.warn("IndexedDB delete failed, falling back to local storage:", dbError)
-          const localJournals = this.storage?.getLocal?.("journals") || []
-          const filteredJournals = localJournals.filter(item => item.id !== id)
-          this.storage?.setLocal?.("journals", filteredJournals)
-          deleteSuccessful = true
-        }
-      } else {
-        const localJournals = this.storage?.getLocal?.("journals") || []
-        const filteredJournals = localJournals.filter(item => item.id !== id)
-        this.storage?.setLocal?.("journals", filteredJournals)
-        deleteSuccessful = true
-      }
-
-      if (deleteSuccessful) {
-        await this.loadJournals()
-      } else {
-        throw new Error("Failed to delete journal entry")
-      }
-    } catch (error) {
-      console.error("Error deleting journal entry:", error)
-      alert("Error deleting journal entry. Please try again.")
-    }
-  }
-
-  cancelEdit() {
-    this.isEditMode = false
-    this.currentEditId = null
-    
-    // Reset form
-    if (this.journalForm) {
-      this.journalForm.reset()
-    }
-    
-    // Hide cancel button
-    const cancelBtn = document.getElementById('cancelEditBtn')
-    if (cancelBtn) {
-      cancelBtn.style.display = 'none'
-    }
-    
-    // Reset character count
-    const charCount = document.getElementById("charCount")
-    if (charCount) {
-      charCount.textContent = "0"
     }
   }
 
@@ -371,7 +178,6 @@ class JournalManager {
         await this.storage.clearIndexedDB("journals")
       }
       this.storage?.removeLocal?.("journals")
-      this.cancelEdit() // Reset edit mode
       await this.loadJournals()
     } catch (error) {
       console.error("Error clearing journals:", error)
@@ -405,10 +211,6 @@ class ProjectsManager {
     this.projectFileBtn = document.getElementById("projectFileBtn")
     this.projectFileName = document.getElementById("projectFileName")
 
-    // Edit mode state
-    this.isEditMode = false
-    this.currentEditId = null
-
     this.init()
   }
 
@@ -440,29 +242,6 @@ class ProjectsManager {
         }
       })
     }
-
-    // Add cancel edit button if it doesn't exist
-    this.addCancelEditButton()
-  }
-
-  addCancelEditButton() {
-    // Check if cancel button already exists
-    if (!document.getElementById('cancelProjectEditBtn')) {
-      const cancelBtn = document.createElement('button')
-      cancelBtn.id = 'cancelProjectEditBtn'
-      cancelBtn.type = 'button'
-      cancelBtn.textContent = 'Cancel Edit'
-      cancelBtn.style.display = 'none'
-      cancelBtn.classList.add('cancel-edit-btn')
-      
-      cancelBtn.addEventListener('click', () => {
-        this.cancelEdit()
-      })
-      
-      if (this.projectForm) {
-        this.projectForm.appendChild(cancelBtn)
-      }
-    }
   }
 
   openModal() {
@@ -491,7 +270,12 @@ class ProjectsManager {
   async handleSubmit(e) {
     e.preventDefault()
 
-    
+    // FIX: Remove invalid validation - browserAPIs.validateForm doesn't exist
+    // if (this.browserAPIs && !this.browserAPIs.validateForm(this.projectForm)) {
+    //   alert("Please fix the errors in the form before submitting.")
+    //   return
+    // }
+
     const titleInput = document.getElementById("projectTitle")
     const descInput = document.getElementById("projectDescription")
 
@@ -539,93 +323,34 @@ class ProjectsManager {
         alert("Error reading the file. Please try again.")
         return
       }
-    } else if (this.isEditMode && this.currentEditId) {
-      // Keep existing file if no new file is selected during edit
-      const existingProject = await this.getProjectById(this.currentEditId)
-      if (existingProject && existingProject.fileName) {
-        project.fileName = existingProject.fileName
-        project.fileType = existingProject.fileType
-        project.fileSize = existingProject.fileSize
-        project.fileData = existingProject.fileData
-      }
     }
     
-    // Add ID for editing
-    if (this.isEditMode && this.currentEditId) {
-      project.id = this.currentEditId
-    } else {
-      project.id = 'project_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9)
-    }
-
     try {
+      // FIX: Better storage handling
       let saveSuccessful = false
       
-      if (this.isEditMode && this.currentEditId) {
-        // Update existing project
-        if (this.storage && typeof this.storage.updateInIndexedDB === "function") {
-          try {
-            await this.storage.updateInIndexedDB("projects", this.currentEditId, project)
-            saveSuccessful = true
-          } catch (dbError) {
-            console.warn("IndexedDB update failed, falling back to local storage:", dbError)
-            const localProjects = this.storage?.getLocal?.("projects") || []
-            const index = localProjects.findIndex(item => item.id === this.currentEditId)
-            if (index !== -1) {
-              localProjects[index] = project
-              this.storage?.setLocal?.("projects", localProjects)
-              saveSuccessful = true
-            }
-          }
+      if (this.storage && typeof this.storage.addToIndexedDB === "function") {
+        try {
+          await this.storage.addToIndexedDB("projects", project)
+          saveSuccessful = true
+        } catch (dbError) {
+          console.warn("IndexedDB save failed, falling back to local storage:", dbError)
         }
-      } else {
-        // Add new project
-        if (this.storage && typeof this.storage.addToIndexedDB === "function") {
-          try {
-            await this.storage.addToIndexedDB("projects", project)
-            saveSuccessful = true
-          } catch (dbError) {
-            console.warn("IndexedDB save failed, falling back to local storage:", dbError)
-            const localProjects = this.storage?.getLocal?.("projects") || []
-            localProjects.unshift(project)
-            this.storage?.setLocal?.("projects", localProjects)
-            saveSuccessful = true
-          }
-        }
+      }
+      
+      if (!saveSuccessful) {
+        const localProjects = this.storage?.getLocal?.("projects") || []
+        localProjects.unshift(project)
+        this.storage?.setLocal?.("projects", localProjects)
       }
 
-      if (saveSuccessful) {
-        this.projectForm.reset()
-        this.cancelEdit() // Reset edit mode
-        this.resetFileInput()
-        if (this.projectForm) this.projectForm.style.display = "none"
-        await this.loadProjects()
-      } else {
-        throw new Error("Failed to save project")
-      }
+      this.projectForm.reset()
+      if (this.projectForm) this.projectForm.style.display = "none"
+      this.resetFileInput()
+      await this.loadProjects()
     } catch (error) {
       console.error("Error saving project:", error)
       alert("Error saving project. Please try again.")
-    }
-  }
-
-  async getProjectById(id) {
-    try {
-      let projects = []
-      
-      if (this.storage && typeof this.storage.getAllFromIndexedDB === "function") {
-        try {
-          projects = await this.storage.getAllFromIndexedDB("projects")
-        } catch (dbError) {
-          projects = this.storage?.getLocal?.("projects") || []
-        }
-      } else {
-        projects = this.storage?.getLocal?.("projects") || []
-      }
-
-      return projects.find(item => item.id === id)
-    } catch (error) {
-      console.error("Error getting project:", error)
-      return null
     }
   }
 
@@ -684,14 +409,10 @@ class ProjectsManager {
         this.projectsList.innerHTML = projects
           .map(
             (project) => `
-            <div class="project-card" data-id="${project.id || ''}">
+            <div class="project-card">
               <div class="project-header">
                 <h3>${this.escapeHtml(project.title)}</h3>
-                <div class="project-actions">
-                  <small>${project.dateString || new Date(project.timestamp).toLocaleString()}</small>
-                  <button class="edit-btn" data-id="${project.id || ''}">Edit</button>
-                  <button class="delete-btn" data-id="${project.id || ''}">Delete</button>
-                </div>
+                <small>${project.dateString || new Date(project.timestamp).toLocaleString()}</small>
               </div>
               <p>${this.escapeHtml(project.description)}</p>
               ${project.fileName ? `<p class="project-file"><strong>File:</strong> ${this.escapeHtml(project.fileName)} (${this.formatFileSize(project.fileSize)})</p>` : ""}
@@ -699,127 +420,10 @@ class ProjectsManager {
           `
           )
           .join("")
-
-        // Add event listeners to edit and delete buttons
-        this.projectsList.querySelectorAll('.edit-btn').forEach(btn => {
-          btn.addEventListener('click', (e) => {
-            e.stopPropagation()
-            const id = btn.getAttribute('data-id')
-            this.editProject(id)
-          })
-        })
-
-        this.projectsList.querySelectorAll('.delete-btn').forEach(btn => {
-          btn.addEventListener('click', (e) => {
-            e.stopPropagation()
-            const id = btn.getAttribute('data-id')
-            this.deleteProject(id)
-          })
-        })
       }
     } catch (error) {
       console.error("Error loading projects:", error)
       if (this.projectsEmptyState) this.projectsEmptyState.style.display = "block"
-    }
-  }
-
-  async editProject(id) {
-    try {
-      const project = await this.getProjectById(id)
-      if (!project) {
-        alert("Project not found")
-        return
-      }
-
-      // Populate form with project data
-      const titleInput = document.getElementById("projectTitle")
-      const descInput = document.getElementById("projectDescription")
-
-      if (titleInput && descInput) {
-        titleInput.value = project.title
-        descInput.value = project.description
-      }
-
-      // Update file display if exists
-      if (project.fileName) {
-        this.projectFileName.textContent = project.fileName
-      }
-
-      // Set edit mode
-      this.isEditMode = true
-      this.currentEditId = id
-
-      // Show form and cancel button
-      if (this.projectForm) {
-        this.projectForm.style.display = "block"
-      }
-      
-      const cancelBtn = document.getElementById('cancelProjectEditBtn')
-      if (cancelBtn) {
-        cancelBtn.style.display = 'inline-block'
-      }
-
-      // Scroll to form
-      this.projectForm?.scrollIntoView({ behavior: 'smooth' })
-    } catch (error) {
-      console.error("Error editing project:", error)
-      alert("Error loading project for editing. Please try again.")
-    }
-  }
-
-  async deleteProject(id) {
-    if (!confirm("Are you sure you want to delete this project? This cannot be undone.")) {
-      return
-    }
-
-    try {
-      let deleteSuccessful = false
-      
-      if (this.storage && typeof this.storage.deleteFromIndexedDB === "function") {
-        try {
-          await this.storage.deleteFromIndexedDB("projects", id)
-          deleteSuccessful = true
-        } catch (dbError) {
-          console.warn("IndexedDB delete failed, falling back to local storage:", dbError)
-          const localProjects = this.storage?.getLocal?.("projects") || []
-          const filteredProjects = localProjects.filter(item => item.id !== id)
-          this.storage?.setLocal?.("projects", filteredProjects)
-          deleteSuccessful = true
-        }
-      } else {
-        const localProjects = this.storage?.getLocal?.("projects") || []
-        const filteredProjects = localProjects.filter(item => item.id !== id)
-        this.storage?.setLocal?.("projects", filteredProjects)
-        deleteSuccessful = true
-      }
-
-      if (deleteSuccessful) {
-        await this.loadProjects()
-      } else {
-        throw new Error("Failed to delete project")
-      }
-    } catch (error) {
-      console.error("Error deleting project:", error)
-      alert("Error deleting project. Please try again.")
-    }
-  }
-
-  cancelEdit() {
-    this.isEditMode = false
-    this.currentEditId = null
-    
-    // Reset form
-    if (this.projectForm) {
-      this.projectForm.reset()
-    }
-    
-    // Reset file input
-    this.resetFileInput()
-    
-    // Hide cancel button
-    const cancelBtn = document.getElementById('cancelProjectEditBtn')
-    if (cancelBtn) {
-      cancelBtn.style.display = 'none'
     }
   }
 
@@ -839,7 +443,6 @@ class ProjectsManager {
         await this.storage.clearIndexedDB("projects")
       }
       this.storage?.removeLocal?.("projects")
-      this.cancelEdit() // Reset edit mode
       await this.loadProjects()
     } catch (error) {
       console.error("Error clearing projects:", error)
@@ -854,75 +457,6 @@ class ProjectsManager {
     return div.innerHTML
   }
 }
-
-// Add these missing storage methods to your StorageManager class
-// If you don't have these methods, add them to your StorageManager:
-
-/*
-// Add to your StorageManager class:
-
-async updateInIndexedDB(storeName, id, data) {
-  return new Promise((resolve, reject) => {
-    if (!this.db) {
-      reject(new Error('Database not initialized'));
-      return;
-    }
-    
-    const transaction = this.db.transaction([storeName], 'readwrite');
-    const store = transaction.objectStore(storeName);
-    
-    // First get the existing object to preserve the key
-    const getRequest = store.get(id);
-    
-    getRequest.onsuccess = () => {
-      const existingData = getRequest.result;
-      if (existingData) {
-        // Merge the existing data with new data, preserving the key
-        const updatedData = { ...existingData, ...data };
-        const putRequest = store.put(updatedData);
-        
-        putRequest.onsuccess = () => resolve(putRequest.result);
-        putRequest.onerror = () => reject(putRequest.error);
-      } else {
-        reject(new Error('Item not found'));
-      }
-    };
-    
-    getRequest.onerror = () => reject(getRequest.error);
-  });
-}
-
-async deleteFromIndexedDB(storeName, id) {
-  return new Promise((resolve, reject) => {
-    if (!this.db) {
-      reject(new Error('Database not initialized'));
-      return;
-    }
-    
-    const transaction = this.db.transaction([storeName], 'readwrite');
-    const store = transaction.objectStore(storeName);
-    const request = store.delete(id);
-    
-    request.onsuccess = () => resolve();
-    request.onerror = () => reject(request.error);
-  });
-}
-*/
-
-// The rest of your existing code (QuizGame, setupModalSystem, etc.) remains the same...
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 // Utility: Date/time update
 function updateDateTime(elementId) {
@@ -945,26 +479,6 @@ function startPageDateTime() {
   updateDateTime("pageDateTime")
   setInterval(() => updateDateTime("pageDateTime"), 1000)
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 // Quiz Game Functionality
 class QuizGame {
